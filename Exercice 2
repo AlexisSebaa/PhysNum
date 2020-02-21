@@ -1,1 +1,87 @@
-#Code exercice 2
+from scipy import tan, sqrt, linspace
+import matplotlib.pyplot as plt
+
+# Paramètres
+
+w = 1  #nm
+V = 20  #eV
+m = 9.1094e-31  #kg
+h_bar = 6.582119514e-16  #eV.s
+K = w**2*m/(1.602e-1)/(2*h_bar**2) # On simplifie l´expression de y1
+
+
+def y1(e):
+    # on utilise 1 eV = 1.602 * 10 ** -19 J pour convertir w**2*m en eV*s**2
+    return tan(sqrt(K * e))
+
+
+def y2(e):
+    return sqrt((V - e) / e)
+
+
+def y3(e):
+    return -sqrt(e / (V - e))
+
+
+# Affichage des résultats
+    
+E = linspace(0.05, 19.95, 100)
+f_y1 = list(map(y1, E))
+f_y2 = list(map(y2, E))
+f_y3 = list(map(y3, E))
+plt.plot(E, f_y1, "b.")
+plt.plot(E, f_y2, "g--")
+plt.plot(E, f_y3, "r--")
+#plt.xlim(0.3,0.5)
+#plt.ylim(-5,5)
+plt.xlabel('Energie E (en eV)')
+plt.show()
+
+# Méthode de la bissection 
+
+def f1(x):
+    return y1(x) - y2(x)      #y1 - y2
+
+                                    #a expliquer
+def f2(x):
+    return y1(x) - y3(x)      #y1 - y3 
+
+
+# après avoir estimé grossierement les premieres valeurs ou la courbe en zigzag coupe l'axe
+# on peut creer les intervalles nécessaires de x1 et x2 dans lesquelles
+    # on va chercher nos racines avec la bissection
+    
+epsilon = 0.001 # la précision imposée étant 0.001 
+
+def bissection(f, x1, x2, epsilon):
+
+    def demi_intervalle(x, y):
+        return (x + y) / 2
+
+    def signe(x, y):
+        if x > 0 and y > 0 or x < 0 and y < 0:
+            return True
+        else:
+            return False
+
+    while abs(x1 - x2) > epsilon:
+        x = demi_intervalle(x1, x2)
+        if signe(f(x1), f(x)):
+            x1 = x
+        elif signe(f(x), f(x2)):
+            x2 = x
+        elif abs(x) < epsilon:
+            return x
+
+    return demi_intervalle(x1, x2)
+
+
+
+print('E0 = ', bissection(f1, 1.2, 1.8, epsilon))    #Impair car la courbe bleue coupe d'abord la courbe rouge
+print('E1 = ', bissection(f2, 2.5, 4.5, epsilon))   #Pair
+
+print('E2 = ', bissection(f1, 5, 7.5, epsilon))
+print('E3 = ', bissection(f2, 7.6, 9, epsilon))
+
+print('E4 = ', bissection(f1, 10, 12.5, epsilon))
+print('E5 = ', bissection(f2, 13, 17, epsilon))
