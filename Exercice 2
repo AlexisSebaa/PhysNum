@@ -32,8 +32,6 @@ f_y3 = list(map(y3, E))
 plt.plot(E, f_y1, "b.")
 plt.plot(E, f_y2, "g")
 plt.plot(E, f_y3, "r")
-#plt.xlim(0.3,0.5)
-#plt.ylim(-5,5)
 plt.xlabel('Energie E (en eV)')
 plt.grid()
 
