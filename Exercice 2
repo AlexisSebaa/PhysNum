@@ -29,9 +29,10 @@ E = linspace(0.05, 19.95, 100)
 f_y1 = list(map(y1, E))
 f_y2 = list(map(y2, E))
 f_y3 = list(map(y3, E))
-plt.plot(E, f_y1, "b.")
+plt.plot(E, f_y1, "b--")
 plt.plot(E, f_y2, "g")
 plt.plot(E, f_y3, "r")
+#plt.xlim(2.6,3)
 plt.xlabel('Energie E (en eV)')
 plt.grid()
 
@@ -64,7 +65,7 @@ def bissection(f, x1, x2, epsilon):
         else:
             return False
 
-    while abs(x1 - x2) > epsilon:
+    while abs(x1 - x2) > epsilon:        #x1 et x2 sont les bornes choisies
         x = demi_intervalle(x1, x2)
         if signe(f(x1), f(x)):
             x1 = x
@@ -77,11 +78,11 @@ def bissection(f, x1, x2, epsilon):
 
 
 
-print('E0 = ', bissection(f1, 1.2, 1.8, epsilon))    #Impair car la courbe bleue coupe d'abord la courbe rouge
-print('E1 = ', bissection(f2, 2.5, 4.5, epsilon))   #Pair
+print('E0 = ', bissection(f2, 1.2, 1.8, epsilon))   #Impair car la courbe bleue coupe d'abord la courbe rouge
+print('E1 = ', bissection(f1, 2.5, 3, epsilon))   #Pair mais echanger f1 et f2 pour tester 
 
-print('E2 = ', bissection(f1, 5, 7.5, epsilon))
-print('E3 = ', bissection(f2, 7.6, 9, epsilon))
+print('E2 = ', bissection(f2, 5, 7.5, epsilon))
+print('E3 = ', bissection(f1, 7.6, 9, epsilon))
 
-print('E4 = ', bissection(f1, 10, 12.5, epsilon))
-print('E5 = ', bissection(f2, 13, 17, epsilon))
+print('E4 = ', bissection(f2, 10, 12.5, epsilon))
+print('E5 = ', bissection(f1, 13, 17, epsilon))
