@@ -1,1 +1,83 @@
-#Code exercice 4
+from scipy import zeros, empty, dot, sqrt, array, copy, identity
+
+def decomposition(A, epsilon):   #epsilon est la précision de l'erreur
+   
+    N = A.shape[0]
+
+    def QR(A):
+       
+        N = A.shape[0]
+        Q = empty([ N, N ], float)
+        R = zeros([ N, N ], float)
+
+        A_colonnes = []             # on créé les vecteurs q
+        for i in range(N):
+            A_colonnes.append(A[:, i])
+
+        def norme(v):
+            return sqrt(dot(v, v))  #avec le "dot product" on exprime la norme
+
+        u_colonnes = [ copy(A_colonnes[0]) ]     #on initialise nos vecteurs u
+        q_colonnes = [ copy(A_colonnes[0]) / norme(A_colonnes[0]) ]  #et q
+        
+        for i in range(1, N):     #on les itèrent pour les calculer
+            u_colonnes.append(copy(A_colonnes[i]))
+            for j in range(i):
+                u_colonnes[i] -= dot(q_colonnes[j], A_colonnes[i]) * q_colonnes[j]
+            q_colonnes.append(u_colonnes[i] / norme(u_colonnes[i]))
+
+        # On créé la matrice Q à partir des q
+        
+        for i in range(N):
+            Q[:, i] = q_colonnes[i]
+
+        # On créé la matrice R avec les u et q
+        
+        for i in range(N):
+            for j in range(i, N):
+                if i == j:
+                    R[i, i] = norme(u_colonnes[i])
+                else:
+                    R[i, j] = dot(q_colonnes[i], A_colonnes[j])
+
+        return [ Q, R ]
+    
+
+    def hors_diagonale(a):
+        def verifie(x):
+            if abs(x) < epsilon:
+                return True
+            else:
+                return False
+
+        for i in range(N):
+            for j in range(N):
+                if i == j:
+                    continue
+                else:
+                    if not verifie(a[i, j]):
+                        return False
+        return True
+
+    B = identity(N)
+    
+    while(not hors_diagonale(A)):
+        # Créé matrice pour stocker les vec_propres
+        Q, R  = QR(A)
+
+        # recalcule A pour vérifier que A = QR en tout temps
+        A = dot(R, Q)
+
+        # recalcule B
+        B = dot(B, Q)
+    return [ B, A ]
+
+# Avec la matrice de la question c) 
+    
+A = array([ [1, 4, 8, 4],
+            [4, 2, 3, 7],
+            [8, 3, 6, 9],
+            [4, 7, 9, 2] ], float)
+[vec_propres, val_propres] = decomposition(A, 10 ** -6) #marche avec 10**12 mais pas 18
+print(vec_propres)
+print(val_propres)
